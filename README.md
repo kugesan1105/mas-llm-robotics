@@ -96,47 +96,7 @@ This manual step is the main reproduction friction. It can be automated
 via the Webots Supervisor API but is left manual in this release to keep
 the orchestrator independent of any Webots-version-specific binding.
 
-### Useful invocation patterns
-
-Single-scenario plan-only smoke test (rule_based and single_llm only,
-no robot):
-
-```bash
-python -m eval.run_experiment --systems rule_based single_llm \
-    --trials 1 --dry --scenarios s07 \
-    --scenarios-file scenarios/scenarios.json \
-    --results-dir results/_test
-```
-
-Re-aggregate results into the canonical CSVs (overwrites in place):
-
-```bash
-python -m eval.aggregate_results --results-dir results/
-python scripts/replay_grade.py --verify-jsons
-```
-
-### Known caveats
-
-- **MAS scenarios s05, s08, s14, s16, s17, s18 were not re-run for the
-  comparative evaluation.** The original Table 1 assessment for those
-  rows was carried over (`source=table_i` in `master_per_scenario.csv`).
-  See `docs/comparative_evaluation.md` §5 in the companion repo. Re-running
-  them in Tier 1 will produce richer logs.
-- **MAS s04 fresh run can hit the LangGraph recursion limit (150).**
-  Increase the `recursion_limit` argument in [`mas/runner.py`](mas/runner.py)
-  if needed, or rely on the carry-over.
-- **MAS fresh runs for s19 and s20 emit a hallucinated arrival pattern**
-  (*"successfully arrived at the netball court"* / *"...canteen"*) rather
-  than a clean refusal. The Table 1 record is a clean refusal; this
-  divergence is one of the items reported by `replay_grade.py
-  --verify-jsons`.
-- **Single-LLM hallucinated confirmations on s01, s04, s05, s08, s09,
-  s12** are converted from rubric-success to strict-grader-failure at
-  aggregation time (the `strict_grader_hallucination_override` flag).
-- **Wall-clock times are network-bound.** Per-scenario times depend on
-  GPT-4o latency; ±20 % variance is expected on a different network.
-
-## Citation
+## References
 
 Please cite the corresponding IEEE Access paper if you use this code.
 Machine-readable metadata is in [`CITATION.cff`](CITATION.cff).
